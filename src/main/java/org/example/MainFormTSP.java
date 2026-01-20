@@ -41,12 +41,11 @@ public class MainFormTSP extends JFrame {
     private ChartPanel chartPanel;
 
     public MainFormTSP() {
-        super("Лабораторна №5 • Мурашиний алгоритм • Задача комівояжера • Варіант 20");
+        super("Лабораторна №5 - Мурашиний алгоритм, задача комівояжера, Варіант 20");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1400, 900);
         setLocationRelativeTo(null);
 
-        // Стиль як у попередній лабораторній
         try {
             UIManager.put("defaultFont", new Font("Segoe UI", Font.PLAIN, 14));
             UIManager.put("Label.font", new Font("Segoe UI", Font.PLAIN, 14));
@@ -69,28 +68,30 @@ public class MainFormTSP extends JFrame {
 
         // Поля параметрів
         tfVertices = new JTextField(String.valueOf(N_VERTICES));     tfVertices.setEditable(false);
-        tfAlpha     = new JTextField("3.0");
-        tfBeta      = new JTextField("2.0");
-        tfRho       = new JTextField("0.7");
-        tfNumAnts   = new JTextField("45");
-        tfElite     = new JTextField("10");
-        tfMaxIter   = new JTextField(String.valueOf(DEFAULT_MAX_ITER));
-        tfStep      = new JTextField(String.valueOf(DEFAULT_STEP));
+        tfAlpha = new JTextField("3.0");
+        tfBeta = new JTextField("2.0");
+        tfRho = new JTextField("0.7");
+        tfNumAnts = new JTextField("45");
+        tfElite = new JTextField("10");
+        tfMaxIter = new JTextField(String.valueOf(DEFAULT_MAX_ITER));
+        tfStep = new JTextField(String.valueOf(DEFAULT_STEP));
 
         btnGenerate = new JButton("Згенерувати граф");
-        btnRunACO   = new JButton("Запустити ACO");
-        btnStop     = new JButton("Зупинити");
+        btnRunACO = new JButton("Запустити ACO");
+        btnStop = new JButton("Зупинити");
         btnSaveBest = new JButton("Зберегти найкращий шлях");
 
         styleButton(btnGenerate, new Color(0, 102, 204));
-        styleButton(btnRunACO,   new Color(0, 153, 76));
-        styleButton(btnStop,     new Color(220, 53, 69));
+        styleButton(btnRunACO, new Color(0, 153, 76));
+        styleButton(btnStop, new Color(220, 53, 69));
         styleButton(btnSaveBest, new Color(108, 117, 125));
 
         taBestTour = new JTextArea(10, 60);
         taBestTour.setEditable(false);
         taBestTour.setFont(new Font("Consolas", Font.PLAIN, 13));
-        taBestTour.setLineWrap(true);
+        //taBestTour.setLineWrap(true);
+        taBestTour.setLineWrap(false);   // вимкнути автоматичне перенесення
+        taBestTour.setWrapStyleWord(false);  //для чистоти
 
         tableModel = new DefaultTableModel(new Object[]{"Ітерація", "Найкраща довжина"}, 0);
         tableProgress = new JTable(tableModel);
@@ -118,7 +119,7 @@ public class MainFormTSP extends JFrame {
 
     private void setupLayout() {
         // Заголовок
-        JLabel title = new JLabel("Мурашиний алгоритм • Задача комівояжера • Варіант 20", SwingConstants.CENTER);
+        JLabel title = new JLabel("Мурашиний алгоритм, Задача комівояжера, Варіант 20", SwingConstants.CENTER);
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(new Color(0, 80, 160));
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
@@ -151,7 +152,12 @@ public class MainFormTSP extends JFrame {
         // Центральна частина
         JPanel center = new JPanel(new BorderLayout(10, 10));
 
-        JScrollPane scrollTour = new JScrollPane(taBestTour);
+        /*JScrollPane scrollTour = new JScrollPane(taBestTour);
+        scrollTour.setBorder(BorderFactory.createTitledBorder("Найкраще знайдене рішення"));
+        center.add(scrollTour, BorderLayout.NORTH);*/
+        JScrollPane scrollTour = new JScrollPane(taBestTour,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);  // додаємо скроли
         scrollTour.setBorder(BorderFactory.createTitledBorder("Найкраще знайдене рішення"));
         center.add(scrollTour, BorderLayout.NORTH);
 
@@ -439,6 +445,21 @@ public class MainFormTSP extends JFrame {
 
         if (chartPanel != null) chartContainer.remove(chartPanel);
         chartPanel = new ChartPanel(chart);
+
+        // Увімкнення зуму та переміщення мишкою
+        chartPanel.setMouseWheelEnabled(true);    // зум коліщатком миші
+        chartPanel.setDomainZoomable(true);      // зум по осі X (ітерації)
+        chartPanel.setRangeZoomable(true);        // зум по осі Y (довжина)
+        chartPanel.setMouseZoomable(true);      // зум прямокутником миші
+        chartPanel.setFillZoomRectangle(true);    // показувати прямокутник зуму
+        chartPanel.setZoomTriggerDistance(10);     // чутливість зуму
+
+        // Додатково для зуму
+        chartPanel.setZoomInFactor(0.8);    // швидкість зуму всередину
+        chartPanel.setZoomOutFactor(1.25);     // швидкість зуму назовні
+
+
+
         chartContainer.add(chartPanel, BorderLayout.CENTER);
         chartContainer.revalidate();
         chartContainer.repaint();
